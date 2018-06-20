@@ -1,0 +1,3 @@
+class EODown(Exception):
+    pass
+
