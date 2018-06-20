@@ -45,14 +45,16 @@ class client(object):
             for item in resp['data']:
                 yield item
             if 'paging' in resp.keys():
-                if resp['paging']['next']:
+                if 'next' in resp['paging'] and resp['paging']['next']:
                     url = self.make_host_url(resp['paging']['next'])
                     params = {}
                     fetch_more = True
                 else:
                     fetch_more = False
 
-    def iter_all_lists(self):
+
+class Lists(client):
+    def iter_all(self):
         URL_ENDPOINT = 'lists'
         resp = []
 
@@ -62,7 +64,7 @@ class client(object):
         for item in self.iter_email_octopus_api(url, params):
             yield item
 
-    def get_all_lists(self):
+    def get_all(self):
         resp = []
 
         for item in self.iter_all_lists():
@@ -70,8 +72,26 @@ class client(object):
 
         return resp
 
-    def iter_list_unsubscribed(self, alist):
+    def iter_unsubscribed(self, alist):
         endpoint = 'lists/{0}/contacts/unsubscribed'.format(alist)
+        url = self.make_api_url(endpoint)
+        for item in self.iter_email_octopus_api(url):
+            yield item
+
+
+class Campaigns(client):
+    def iter_all(self):
+        URL_ENDPOINT = 'campaigns'
+        resp = []
+
+        url = self.make_api_url(URL_ENDPOINT)
+        params = self.full_api_params({'page': 1, 'limit': 100})
+
+        for item in self.iter_email_octopus_api(url, params):
+            yield item
+
+    def iter_bounced(self, acampaign):
+        endpoint = 'campaigns/{0}/reports/bounced'.format(acampaign)
         url = self.make_api_url(endpoint)
         for item in self.iter_email_octopus_api(url):
             yield item
