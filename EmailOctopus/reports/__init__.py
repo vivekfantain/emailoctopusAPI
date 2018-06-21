@@ -2,7 +2,7 @@ from EmailOctopus import Campaigns
 
 
 class CampaignReport(Campaigns):
-    def iter_prune_emails(self, campaign):
+    def iter_failed_emails(self, campaign):
         for item in self.iter_bounced(campaign):
             if item['type'] == 'HARD':
                 yield item['contact']['email_address']
