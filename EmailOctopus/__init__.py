@@ -90,8 +90,25 @@ class Campaigns(client):
         for item in self.iter_email_octopus_api(url, params):
             yield item
 
-    def iter_bounced(self, acampaign):
-        endpoint = 'campaigns/{0}/reports/bounced'.format(acampaign)
+    def iter_campaign(self, endpoint, acampaign):
+        endpoint = endpoint.format(acampaign)
         url = self.make_api_url(endpoint)
         for item in self.iter_email_octopus_api(url):
             yield item
+
+    def iter_bounced(self, acampaign):
+        return self.iter_campaign('campaigns/{0}/reports/bounced', acampaign)
+
+    def iter_unsubscribed(self, acampaign):
+        return self.iter_campaign('campaigns/{0}/reports/unsubscribed',
+                                  acampaign)
+
+    def iter_complained(self, acampaign):
+        return self.iter_campaign('campaigns/{0}/reports/complained',
+                                  acampaign)
+
+    def iter_opened(self, acampaign):
+        return self.iter_campaign('campaigns/{0}/reports/opened', acampaign)
+
+    def iter_sent(self, acampaign):
+        return self.iter_campaign('campaigns/{0}/reports/sent', acampaign)
